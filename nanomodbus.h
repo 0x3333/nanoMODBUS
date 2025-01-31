@@ -149,6 +149,7 @@ typedef enum nmbs_transport {
  */
 typedef struct nmbs_platform_conf {
     nmbs_transport transport; /*!< Transport type */
+    int32_t (*flush)(void* arg); /*!< Flush transport function pointer */
     int32_t (*read)(uint8_t* buf, uint16_t count, int32_t byte_timeout_ms,
                     void* arg); /*!< Bytes read transport function pointer */
     int32_t (*write)(const uint8_t* buf, uint16_t count, int32_t byte_timeout_ms,

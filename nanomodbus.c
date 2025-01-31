@@ -183,11 +183,6 @@ static nmbs_error send(const nmbs_t* nmbs, uint16_t count) {
 }
 
 
-static void flush(nmbs_t* nmbs) {
-    nmbs->platform.read(nmbs->msg.buf, sizeof(nmbs->msg.buf), 0, nmbs->platform.arg);
-}
-
-
 static void msg_buf_reset(nmbs_t* nmbs) {
     nmbs->msg.buf_idx = 0;
 }
@@ -212,7 +207,7 @@ static void msg_state_req(nmbs_t* nmbs, uint8_t fc) {
         nmbs->current_tid++;
 
     // Flush the remaining data on the line before sending the request
-    flush(nmbs);
+    nmbs->platform.flush(nmbs->platform.arg);
 
     msg_state_reset(nmbs);
     nmbs->msg.unit_id = nmbs->dest_address_rtu;
@@ -1877,7 +1872,7 @@ static nmbs_error handle_req_fc(nmbs_t* nmbs) {
             break;
 #endif
         default:
-            flush(nmbs);
+            nmbs->platform.flush(nmbs->platform.arg);
             if (!nmbs->msg.ignored && !nmbs->msg.broadcast)
                 err = send_exception_msg(nmbs, NMBS_EXCEPTION_ILLEGAL_FUNCTION);
     }
@@ -1937,7 +1932,7 @@ nmbs_error nmbs_server_poll(nmbs_t* nmbs) {
     err = handle_req_fc(nmbs);
     if (err != NMBS_ERROR_NONE) {
         if (err != NMBS_ERROR_TIMEOUT)
-            flush(nmbs);
+            nmbs->platform.flush(nmbs->platform.arg);
 
         return err;
     }
