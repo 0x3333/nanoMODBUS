@@ -230,13 +230,18 @@ typedef struct nmbs_callbacks {
 } nmbs_callbacks;
 
 
+#ifndef NMBS_INTERNAL_BUFFER_SIZE
+  #define NMBS_INTERNAL_BUFFER_SIZE 260
+#endif
+
+
 /**
  * nanoMODBUS client/server instance type. All struct members are to be considered private,
  * it is not advisable to read/write them directly.
  */
 typedef struct nmbs_t {
     struct {
-        uint8_t buf[260];
+        uint8_t buf[NMBS_INTERNAL_BUFFER_SIZE];
         uint16_t buf_idx;
 
         uint8_t unit_id;
